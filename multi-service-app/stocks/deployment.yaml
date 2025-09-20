@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stocks-deployment
+  namespace: stocks-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stocks
+  template:
+    metadata:
+      labels:
+        app: stocks
+    spec:
+      containers:
+      - name: stocks-container
+        image: stocks-app
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        env:
+        - name: FLASK_RUN_PORT
+          value: "8000"
+        - name: MONGO_URI
+          value: "mongodb://mongo.stocks-system.svc.cluster.local:27017/"
+        - name: MONGO_COLLECTION
+          value: "stocks"
+        - name: NINJA_API_KEY
+          value: "oQydR3/N3JtNsbmlMrkHhg==ZjKlUmwC9N9eYlXb"
+        - name: HOST
+          value: "0.0.0.0"

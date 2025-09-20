@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capital-gains-deployment
+  namespace: stocks-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: capital-gains
+  template:
+    metadata:
+      labels:
+        app: capital-gains
+    spec:
+      containers:
+      - name: capital-gains-container
+        image: capgains-app
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: FLASK_RUN_PORT
+          value: "8080"
+        - name: STOCKS_URL
+          value: "http://stocks-service.stocks-system.svc.cluster.local:80"
+        - name: HOST
+          value: "0.0.0.0"

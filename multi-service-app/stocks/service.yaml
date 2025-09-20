@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stocks-service
+  namespace: stocks-system
+spec:
+  selector:
+    app: stocks
+  ports:
+  - protocol: TCP
+    port: 80         # External port the service exposes
+    targetPort: 8000 # Port your application is running on (container port)
+
+  type: ClusterIP
