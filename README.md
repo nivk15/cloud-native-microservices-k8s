@@ -5,13 +5,13 @@ This project was implemented as part of my Computer Science coursework and refin
 
 ---
 
-## 🚀 Overview
+##  Overview
 The application manages a simple stock portfolio and capital gains calculation.  
 It is built from several containerized microservices that communicate over a Kubernetes cluster, with persistence, scaling, and load balancing configured for high availability.
 
 ---
 
-## 🏗️ Architecture
+## 🏗 Architecture
 - **Stocks Service (3 replicas)** – REST API for managing stock data  
 - **Capital-Gains Service** – calculates portfolio capital gains  
 - **MongoDB** – database with persistent storage (PersistentVolumes)  
@@ -23,7 +23,7 @@ It is built from several containerized microservices that communicate over a Kub
 
 ---
 
-## 🔧 Tech Highlights
+##  Tech Highlights
 - **Docker** – containerization of all services  
 - **Kubernetes** – orchestration with Deployments, Services, scaling, and PersistentVolumes  
 - **NGINX** – reverse proxy for routing and load balancing  
@@ -48,3 +48,4 @@ kubectl apply -f namespace.yaml
 
 # Deploy all services
 kubectl apply -f .
+
