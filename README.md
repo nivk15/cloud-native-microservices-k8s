@@ -11,7 +11,7 @@ It is built from several containerized microservices that communicate over a Kub
 
 ---
 
-## 🏗 Architecture
+##  Architecture
 - **Stocks Service (3 replicas)** – REST API for managing stock data  
 - **Capital-Gains Service** – calculates portfolio capital gains  
 - **MongoDB** – database with persistent storage (PersistentVolumes)  
@@ -48,4 +48,5 @@ kubectl apply -f namespace.yaml
 
 # Deploy all services
 kubectl apply -f .
+
 
