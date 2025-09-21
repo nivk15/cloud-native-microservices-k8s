@@ -1,17 +1,17 @@
 # Cloud-Native Microservices Application (Docker & Kubernetes)
 
 A multi-service financial application that demonstrates **cloud-native microservices architecture** with Docker containerization and Kubernetes orchestration.  
-This project was implemented as part of my Computer Science coursework and refined to serve as a professional showcase of containerized, distributed application design.
+Originally built as part of my Computer Science coursework and refined into a professional showcase of containerized, distributed application design.
 
 ---
 
-##  Overview
-The application manages a simple stock portfolio and capital gains calculation.  
-It is built from several containerized microservices that communicate over a Kubernetes cluster, with persistence, scaling, and load balancing configured for high availability.
+## Overview
+The application manages a simple stock portfolio and calculates capital gains.  
+It consists of several containerized microservices running in a Kubernetes cluster, with persistence, scaling, and load balancing configured for high availability.
 
 ---
 
-##  Architecture
+## Architecture
 - **Stocks Service (3 replicas)** – REST API for managing stock data  
 - **Capital-Gains Service** – calculates portfolio capital gains  
 - **MongoDB** – database with persistent storage (PersistentVolumes)  
@@ -23,7 +23,7 @@ It is built from several containerized microservices that communicate over a Kub
 
 ---
 
-##  Tech Highlights
+## Technologies
 - **Docker** – containerization of all services  
 - **Kubernetes** – orchestration with Deployments, Services, scaling, and PersistentVolumes  
 - **NGINX** – reverse proxy for routing and load balancing  
@@ -31,22 +31,18 @@ It is built from several containerized microservices that communicate over a Kub
 
 ---
 
-## ⚙️ How to Run
+## Running the Project
 
 ### Prerequisites
 - [Docker](https://www.docker.com/)  
-- [Kind](https://kind.sigs.k8s.io/) or [Minikube](https://minikube.sigs.k8s.io/)  
+- [Kind](https://kind.sigs.k8s.io/) (or [Minikube](https://minikube.sigs.k8s.io/))  
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)  
+- [yq](https://mikefarah.gitbook.io/yq/) (YAML processor)  
+- [curl](https://curl.se/)  
 
-### Setup
+### Quick Start
+From the project root:
+
 ```bash
-# Create Kubernetes cluster with kind
-kind create cluster --config kind-config.yaml
-
-# Apply namespace
-kubectl apply -f namespace.yaml
-
-# Deploy all services
-kubectl apply -f .
-
-
+# Run full setup + smoke test
+./scripts/setup_and_smoke.sh
