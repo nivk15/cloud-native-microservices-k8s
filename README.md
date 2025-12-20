@@ -1,8 +1,6 @@
 # Cloud-Native Microservices Application (Docker & Kubernetes)
 
 A multi-service financial application that demonstrates **cloud-native microservices architecture** with Docker containerization and Kubernetes orchestration.  
-Originally built as part of my Computer Science coursework and refined into a professional showcase of containerized, distributed application design.
-
 ---
 
 ## Overview
@@ -12,7 +10,7 @@ It consists of several containerized microservices running in a Kubernetes clust
 ---
 
 ## Architecture
-- **Stocks Service (3 replicas)** – REST API for managing stock data  
+- **Stocks Service (2 replicas)** – REST API for managing stock data  
 - **Capital-Gains Service** – calculates portfolio capital gains  
 - **MongoDB** – database with persistent storage (PersistentVolumes)  
 - **NGINX Reverse Proxy** – load balancing and routing between services  
