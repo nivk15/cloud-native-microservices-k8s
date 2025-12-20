@@ -5,7 +5,7 @@ metadata:
   namespace: stocks-system
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: standard
   resources:
     requests:
