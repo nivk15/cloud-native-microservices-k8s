@@ -1,46 +1,29 @@
-# Cloud-Native Microservices Application (Docker & Kubernetes)
+# Cloud-Native Microservices App (Kubernetes + Docker)
 
-A multi-service financial application that demonstrates **cloud-native microservices architecture** with Docker containerization and Kubernetes orchestration.  
----
+A Kubernetes-deployed microservices system for managing a stock portfolio:
+CRUD + live stock pricing + capital gains calculation. MongoDB provides persistence, and NGINX is a single entrypoint for routing.
 
-## Overview
-The application manages a simple stock portfolio and calculates capital gains.  
-It consists of several containerized microservices running in a Kubernetes cluster, with persistence, scaling, and load balancing configured for high availability.
-
----
+## Services
+- **stocks** (Flask, 2 replicas): portfolio CRUD + `/stock-value` + `/portfolio-value`
+- **capital-gains** (Flask): calculates capital gains by calling the stocks service
+- **mongo**: persistent storage using PV/PVC
+- **nginx**: reverse proxy / routing to internal services
 
 ## Architecture
-- **Stocks Service (2 replicas)** – REST API for managing stock data  
-- **Capital-Gains Service** – calculates portfolio capital gains  
-- **MongoDB** – database with persistent storage (PersistentVolumes)  
-- **NGINX Reverse Proxy** – load balancing and routing between services  
-
 <p align="center">
-  <img src="architecture.png" alt="Architecture Diagram" width="600"/>
+  <img src="architecture.png" alt="Architecture Diagram" width="650"/>
 </p>
 
----
+## Highlights
+- **Service discovery** via Kubernetes Services (DNS), not Pod IPs
+- **Scaling**: `stocks` runs with 2 replicas behind a Service (load-balanced)
+- **Persistence**: MongoDB uses PV/PVC so data survives Pod restarts
+- **Single entrypoint**: NGINX routes requests by path
 
-## Technologies
-- **Docker** – containerization of all services  
-- **Kubernetes** – orchestration with Deployments, Services, scaling, and PersistentVolumes  
-- **NGINX** – reverse proxy for routing and load balancing  
-- **MongoDB** – persistent storage for stock and portfolio data  
+## Tech Stack
+- Docker, Kubernetes (Deployments, Services, ConfigMaps, PV/PVC)
+- Python (Flask)
+- MongoDB
+- NGINX
 
----
-
-## Running the Project
-
-### Prerequisites
-- [Docker](https://www.docker.com/)  
-- [Kind](https://kind.sigs.k8s.io/) (or [Minikube](https://minikube.sigs.k8s.io/))  
-- [kubectl](https://kubernetes.io/docs/tasks/tools/)  
-- [yq](https://mikefarah.gitbook.io/yq/) (YAML processor)  
-- [curl](https://curl.se/)  
-
-### Quick Start
-From the project root:
-
-```bash
-# Run full setup + smoke test
-./scripts/setup_and_smoke.sh
+## Repo Structure
