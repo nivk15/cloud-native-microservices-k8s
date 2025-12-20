@@ -44,27 +44,60 @@ except KeyError:
 
 
 curr_id = 0
-######################################################################################################
+
+#-------------------------------------------------------------------------------------------
 # helper functions:
+#------------------
 
 def generate_new_id():
     global curr_id
     curr_id += 1
     return str(curr_id)
 
+#------------------
 
 def get_share_price(stock_symbol):
+    # api_url = 'https://api.api-ninjas.com/v1/stockprice?ticker={}'.format(stock_symbol)
+    # try:
+    #     response = requests.get(api_url, headers={'X-Api-Key': API_KEY})
+    #     if response.status_code == requests.codes.ok:
+    #         return(response.json().get('price'))
+    #     else:
+    #         return jsonify({"server error": "API response code " + str(response.status_code)}), 500
+    # except Exception as e:
+    #     print("Exception: ", str(e))
+    #     return jsonify({"server error": str(e)}), 500
+    #----------------------------
+    #----------------------------
+
     api_url = 'https://api.api-ninjas.com/v1/stockprice?ticker={}'.format(stock_symbol)
     try:
-        response = requests.get(api_url, headers={'X-Api-Key': API_KEY})
+        response = requests.get(api_url, headers={'X-Api-Key': API_KEY}, timeout=3)
+
         if response.status_code == requests.codes.ok:
-            return(response.json().get('price'))
+            price = response.json().get('price')
+
+            if not isinstance(price, (int, float)):
+                return jsonify({"server error": "Invalid/missing price from provider"}), 502
+
+            return float(price)
+
         else:
-            return jsonify({"server error": "API response code " + str(response.status_code)}), 500
+            return jsonify({"server error": "API response code " + str(response.status_code)}), 502
+
+    except requests.exceptions.RequestException as e:
+        # חריגות רשת/timeout
+        print("RequestException:", str(e))
+        return jsonify({"server error": str(e)}), 502
     except Exception as e:
-        print("Exception: ", str(e))
+        # כל דבר אחר (למשל JSON decode)
+        print("Exception:", str(e))
         return jsonify({"server error": str(e)}), 500
 
+
+
+#------------------
+#------------------
 
 def validate_date(date):
     try:
@@ -73,8 +106,10 @@ def validate_date(date):
     except ValueError:
         return False
 
+#-------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
 
-####################################################################
+#############################################################################################
 # Resource : /stocks
 
 @app.route('/stocks', methods=['GET'])
@@ -88,6 +123,7 @@ def get_stocks():
     except Exception as e:
         return jsonify({"server error": str(e)}), 500
 
+#-------------------------------------------------------------------------------------------
 
 @app.route('/stocks', methods=['POST'])
 def add_stock():
@@ -130,7 +166,7 @@ def add_stock():
         }
 
         try:
-            # ensuring uniqness of symbol when insrting
+            # ensuring uniqness of symbol when inserting
             inserted_id = stocks_collection.insert_one(new_stock).inserted_id
             return jsonify({'id': str(inserted_id)}), 201
 
@@ -146,7 +182,9 @@ def add_stock():
         return jsonify({"server error": str(e)}), 500
 
 
-#######################################################################
+#-------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
+
 # Resource: /stocks/{id}
 
 @app.route('/stocks/<string:stock_id>', methods=['GET'])
@@ -170,12 +208,14 @@ def get_stock(stock_id):
         print("Exception: ", str(e))
         return jsonify({"server error": str(e)}), 500
 
+#-------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
 
 @app.route('/stocks/<string:stock_id>', methods=['DELETE'])
 def delete_stock(stock_id):
     try:
         object_id = ObjectId(stock_id)
-    except invalidId:
+    except InvalidId:
         print("GET request error: No such ID")
         return jsonify({"error": "Not found"}), 404
 
@@ -190,6 +230,8 @@ def delete_stock(stock_id):
         print("Exception: ", str(e))
         return jsonify({"server error": str(e)}), 500
 
+#-------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
 
 @app.route('/stocks/<string:stock_id>', methods=['PUT'])
 def update(stock_id):
@@ -217,8 +259,7 @@ def update(stock_id):
         if isinstance(data['shares'], int) == False:    # check if it is of type int.
             return jsonify({"error": "Malformed data"}), 400
 
-
-##################################################
+        #----------------------------------------
         # Check if stock_id exists
         stock_id_exists = stocks_collection.find_one({'_id': object_id})
         if not stock_id_exists:
@@ -230,7 +271,7 @@ def update(stock_id):
         stock_symbol_exists = stocks_collection.find_one({'symbol': data['symbol'].upper(), '_id': {'$ne': ObjectId(stock_id)}})
         if stock_symbol_exists:
             return jsonify({"error": "Stock with the same symbol is already exists."}), 400
-##################################################
+        #------------------------------------
 
         update_stock = {
             'name': data['name'],
@@ -259,8 +300,8 @@ def update(stock_id):
         print("Exception: ", str(e))
         return jsonify({"server error": str(e)}), 500
 
-
-############################################################################################################
+#-------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
 
 # Resource /stock-value/{id}
 @app.route('/stock-value/<string:stock_id>', methods=['GET'])
@@ -278,8 +319,17 @@ def get_stock_val(stock_id):
             return jsonify({"error": "Not found"}), 404
 
         ticker = get_share_price(stock['symbol'])
-        if isinstance(ticker, float) == False:
-            return ticker  # server error
+        # if isinstance(ticker, float) == False:
+            # return ticker  # server error
+
+        # error:  tuple of: (response + status)
+        if isinstance(ticker, tuple):
+            return ticker
+
+        if not isinstance(ticker, (int, float)):
+            return jsonify({"server error": "Invalid price from provider"}), 502
+
+        ticker = float(ticker)
 
         stock_value = stock['shares'] * ticker
 
@@ -295,20 +345,23 @@ def get_stock_val(stock_id):
         return jsonify({"server error": str(e)}), 500
 
 
-############################################################################################################
+#-------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
+
 # Resource /portfolio-value
 @app.route('/portfolio-value', methods=['GET'])
 def get_portfolio_val():
     try:
-        date = datetime.today().strftime('%d-%m-%Y')  # date in format : mm-dd-yyyy
+        date = datetime.today().strftime('%d-%m-%Y')  
 
         total = 0
         stocks = stocks_collection.find({})  # matches all the documents in the collection.
         for stock in stocks:
             # stock['_id'] = str(stock['_id'])
             ticker = get_share_price(stock['symbol'])
-            if isinstance(ticker, float) == False:
-                return ticker  # server error
+            if isinstance(ticker, tuple):
+                return ticker  # זה כבר (jsonify, status)
+            
             total += ticker * stock['shares']
 
         response = {
@@ -322,14 +375,16 @@ def get_portfolio_val():
         return jsonify({"server error": str(e)}), 500
 
 
-#############################################################################################################
+#-------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
+
 @app.route('/kill', methods=['GET'])
 def kill_container():
     os._exit(1)
 
+#-------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
 
-
-###############################################################################################################
 if __name__ == "__main__":
     print("running stocks server")
     PORT_NUMBER = int(os.getenv("FLASK_RUN_PORT", 8000))
