@@ -1,7 +1,8 @@
-# Cloud-Native Microservices App (Kubernetes + Docker)
-
-A Kubernetes-deployed microservices system for managing a stock portfolio:
-CRUD + live stock pricing + capital gains calculation. MongoDB provides persistence, and NGINX is a single entrypoint for routing.
+# Cloud-Native Stock Portfolio System
+A cloud-native microservices application deployed on Kubernetes.
+The system manages a stock portfolio with full CRUD support, real-time stock pricing,
+and capital gains calculation. It uses MongoDB for persistent storage and NGINX
+as a single entry point for request routing.
 
 ## Services
 - **stocks** (Flask, 2 replicas): portfolio CRUD + `/stock-value` + `/portfolio-value`
@@ -53,7 +54,7 @@ multi-service-app/
 ```
 
 
-## Running the project
+## Running and Testing
 
 ### 1. Create the Kubernetes cluster and deploy all services
 This script creates a local KIND cluster, builds the Docker images, and deploys all Kubernetes resources
