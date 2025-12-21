@@ -27,28 +27,30 @@ CRUD + live stock pricing + capital gains calculation. MongoDB provides persiste
 - NGINX
 
 ## Repo Structure
-  cloud-computing-k8s-assignment/
-  ├── multi-service-app/
-  │ ├── namespace.yaml
-  │ ├── stocks/
-  │ │ ├── deployment.yaml
-  │ │ ├── service.yaml
-  │ │ └── app.py
-  │ │ └── Dockerfile
-  │ ├── capital-gains/
-  │ │ ├── deployment.yaml
-  │ │ ├── service.yaml
-  │ │ └── app.py
-  │ │ └── Dockerfile
-  │ ├── database/
-  │ │ ├── deployment.yaml
-  │ │ ├── service.yaml
-  │ │ ├── persistentVolume.yaml
-  │ │ ├── persistentVolumeClaim.yaml
-  │ ├── nginx/
-  │ │ ├── deployment.yaml
-  │ │ ├── service.yaml
-  │ │ ├── configmap.yaml
+
+```text
+multi-service-app/
+├── namespace.yaml
+├── stocks/
+│   ├── app.py
+│   ├── Dockerfile
+│   ├── deployment.yaml
+│   └── service.yaml
+├── capital-gains/
+│   ├── app.py
+│   ├── Dockerfile
+│   ├── deployment.yaml
+│   └── service.yaml
+├── database/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── persistentVolume.yaml
+│   └── persistentVolumeClaim.yaml
+└── nginx/
+    ├── deployment.yaml
+    ├── service.yaml
+    └── configmap.yaml
+```
 
 
 ## Running the project
