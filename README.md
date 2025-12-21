@@ -6,7 +6,9 @@ as a single entry point for request routing.
 
 ## Services
 - **stocks** (Flask, 2 replicas): portfolio CRUD + `/stock-value` + `/portfolio-value`
-- **capital-gains** (Flask): calculates capital gains by calling the stocks service
+- **stocks** (Flask): service exposing portfolio CRUD and value endpoints ( /stocks , /stock-value , /portfolio-value ), with 2 replicas
+
+- **capital-gains** (Flask): calculates capital gains by calling the stocks service ( /capital-gains )
 - **mongo**: persistent storage using PV/PVC
 - **nginx**: reverse proxy / routing to internal services
 
