@@ -5,7 +5,7 @@ and capital gains calculation. It uses MongoDB for persistent storage and NGINX
 as a single entry point for request routing.
 
 ## Services
-- **stocks** (Flask): service exposing portfolio CRUD and value endpoints, with 2 replicas
+- **stocks** (Flask): service exposing portfolio CRUD and valuation endpoints, with 2 replicas
                       ( /stocks , /stock-value , /portfolio-value )
 
 - **capital-gains** (Flask): calculates capital gains by calling the stocks service ( /capital-gains )
